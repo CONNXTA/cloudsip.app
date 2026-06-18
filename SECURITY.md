@@ -20,6 +20,6 @@ Anyone with access to the same browser profile may be able to access locally sto
 
 ## Reporting vulnerabilities
 
-Please report suspected vulnerabilities via GitHub issues or contact the project maintainers at a designated security contact placeholder, such as `security@example.com`, until a project-specific address is published.
+Please report suspected vulnerabilities via GitHub issues or contact the project maintainers at a designated security contact placeholder, such as `dev@connxta.com`, until a project-specific address is published.
 
 Do not include real SIP passwords, private recordings, or sensitive production configuration in public reports.
