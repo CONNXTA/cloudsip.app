@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>cloudsip.app</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="frame">
+  <main class="phone">
+
+    <header class="app-header">
+      <div class="statusbar">
+        <span id="todayDate"></span>
+        <a
+          id="companyWebsiteLink"
+          class="company-link"
+          href="https://connxta.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >www.connxta.com</a>
+      </div>
+
+      <div class="brand-row">
+        <div class="brand-left">
+          <div class="brand-mark">T</div>
+          <div>
+            <span class="brand-name" id="displayNameText">cloudsip Phone</span>
+            <span class="brand-status">
+              <span class="online-dot is-offline" id="sipStatusDot"></span>
+              <span id="sipStatusText">Offline</span>
+            </span>
+          </div>
+        </div>
+
+        <button class="header-btn" data-nav="settings" title="Settings"><i class="ti ti-settings" aria-hidden="true"></i></button>
+      </div>
+    </header>
+
+    <section class="screen">
+      <div class="active-call-mini" id="activeCallMini">
+        <span class="mini-icon"><i class="ti ti-phone-call" aria-hidden="true"></i></span>
+        <span class="mini-info">
+          <strong id="miniActiveNumber">Active call</strong>
+          <span id="miniActiveTimer">00:00 · tap to return</span>
+        </span>
+        <button class="mini-return" id="backToActiveCall" type="button">Back</button>
+      </div>
+
+      <!-- DIALPAD -->
+      <div class="view active" id="view-dial">
+        <div class="screen-title">
+          <strong>Dialpad</strong>
+          <span class="small-pill">Ready</span>
+        </div>
+
+
+        <div class="number-card">
+          <div class="number-input" id="numberDisplay">Enter number...</div>
+        </div>
+
+        <div class="keypad" id="keypad">
+          <button class="key" data-key="1"><b>1</b><span></span></button>
+          <button class="key" data-key="2"><b>2</b><span>ABC</span></button>
+          <button class="key" data-key="3"><b>3</b><span>DEF</span></button>
+
+          <button class="key" data-key="4"><b>4</b><span>GHI</span></button>
+          <button class="key" data-key="5"><b>5</b><span>JKL</span></button>
+          <button class="key" data-key="6"><b>6</b><span>MNO</span></button>
+
+          <button class="key" data-key="7"><b>7</b><span>PQRS</span></button>
+          <button class="key" data-key="8"><b>8</b><span>TUV</span></button>
+          <button class="key" data-key="9"><b>9</b><span>WXYZ</span></button>
+
+          <button class="key" data-key="*"><b>*</b><span></span></button>
+          <button class="key" data-key="0"><b>0</b><span>+</span></button>
+          <button class="key" data-key="#"><b>#</b><span></span></button>
+        </div>
+
+        <div class="call-row">
+          <button class="round ghost" id="backspaceBtn" title="Backspace"><i class="ti ti-backspace" aria-hidden="true"></i></button>
+          <button class="round call" id="startCall" title="Call"><i class="ti ti-phone" aria-hidden="true"></i></button>
+          <button class="round ghost" id="clearBtn" title="Clear"><i class="ti ti-x" aria-hidden="true"></i></button>
+        </div>
+      </div>
+
+      <!-- ACTIVE CALL -->
+      <div class="view" id="view-call">
+        <div class="call-top-card">
+          <div class="active-avatar"><i class="ti ti-phone-call" aria-hidden="true"></i></div>
+          <div class="call-number" id="activeNumber">441632960049</div>
+          <div class="call-time" id="activeTimer">00:00</div>
+        </div>
+
+        <div class="call-audio-meters" id="callAudioMeters">
+          <div class="audio-meter-row">
+            <span class="meter-label">Mic</span>
+            <div class="audio-meter">
+              <span class="audio-meter-fill" id="micMeterFill"></span>
+            </div>
+          </div>
+
+          <div class="audio-meter-row">
+            <span class="meter-label">Audio</span>
+            <div class="audio-meter">
+              <span class="audio-meter-fill" id="remoteMeterFill"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="call-actions">
+          <button class="action" id="holdBtn">
+            <span class="action-circle"><i class="ti ti-player-pause" aria-hidden="true"></i></span>
+            Hold
+          </button>
+
+          <button class="action" id="transferBtn">
+            <span class="action-circle"><i class="ti ti-arrow-fork" aria-hidden="true"></i></span>
+            Transfer
+          </button>
+
+          <button class="action" id="toggleDtmfBtn" type="button">
+            <span class="action-circle"><i class="ti ti-keyboard" aria-hidden="true"></i></span>
+            Keypad
+          </button>
+
+          <button class="action" id="muteBtn">
+            <span class="action-circle"><i class="ti ti-microphone-off" aria-hidden="true"></i></span>
+            Mute
+          </button>
+
+          <button class="action" id="recordBtn" type="button">
+            <span class="action-circle"><i class="ti ti-record-mail" aria-hidden="true"></i></span>
+            <span class="action-label" id="recordBtnLabel">Record</span>
+          </button>
+
+          <button class="action" id="consultBtn">
+            <span class="action-circle"><i class="ti ti-user-plus" aria-hidden="true"></i></span>
+            Consult
+          </button>
+
+          <button class="action" id="conferenceBtn">
+            <span class="action-circle"><i class="ti ti-users-group" aria-hidden="true"></i></span>
+            Conf
+          </button>
+        </div>
+
+        <div class="transfer-panel" id="transferPanel" aria-hidden="true">
+          <div class="transfer-title">Transfer Call</div>
+          <input id="transferTarget" class="transfer-input" placeholder="Number / Extension" autocomplete="off">
+          <div class="transfer-actions">
+            <button id="blindTransfer" class="transfer-confirm" type="button">Blind Transfer</button>
+            <button id="consultTransfer" class="transfer-confirm secondary" type="button">Consult Transfer</button>
+          </div>
+          <button id="cancelTransfer" class="transfer-cancel" type="button">Cancel</button>
+        </div>
+
+        <div class="consult-transfer-panel" id="consultTransferPanel" aria-hidden="true">
+          <div>
+            <strong>Consult transfer</strong>
+            <span id="consultTransferTarget">Destination ready</span>
+          </div>
+          <div class="consult-transfer-actions">
+            <button id="completeTransfer" class="transfer-confirm" type="button">Complete Transfer</button>
+            <button id="cancelConsultTransfer" class="transfer-cancel" type="button">Cancel Transfer</button>
+          </div>
+        </div>
+
+        <div class="dtmf-panel" id="dtmfPanel">
+          <button class="dtmf-key" data-dtmf="1">1</button>
+          <button class="dtmf-key" data-dtmf="2">2</button>
+          <button class="dtmf-key" data-dtmf="3">3</button>
+          <button class="dtmf-key" data-dtmf="4">4</button>
+          <button class="dtmf-key" data-dtmf="5">5</button>
+          <button class="dtmf-key" data-dtmf="6">6</button>
+          <button class="dtmf-key" data-dtmf="7">7</button>
+          <button class="dtmf-key" data-dtmf="8">8</button>
+          <button class="dtmf-key" data-dtmf="9">9</button>
+          <button class="dtmf-key" data-dtmf="*">*</button>
+          <button class="dtmf-key" data-dtmf="0">0</button>
+          <button class="dtmf-key" data-dtmf="#">#</button>
+        </div>
+
+        <button class="hangup" id="hangup"><i class="ti ti-phone-off" aria-hidden="true"></i></button>
+
+
+      </div>
+
+      <!-- CONTACTS -->
+      <div class="view" id="view-contacts">
+        <div class="screen-title contacts-title">
+          <strong>Contacts</strong>
+          <button class="title-action" id="addContactBtn" type="button"><i class="ti ti-plus" aria-hidden="true"></i> Add</button>
+        </div>
+
+        <input class="search" id="contactSearch" placeholder="Search contacts..." autocomplete="off" />
+        <div class="list" id="contacts"></div>
+      </div>
+
+      <!-- CALL LOGS -->
+      <div class="view" id="view-logs">
+        <div class="screen-title">
+          <strong>Call Logs</strong>
+          <span class="small-pill">Grouped</span>
+        </div>
+
+        <div class="list" id="logsList"></div>
+      </div>
+
+      <!-- CALL THREAD -->
+      <div class="view" id="view-thread">
+        <div class="thread-header">
+          <button class="back-btn" id="backToLogs"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>
+          <div>
+            <strong id="threadNumber">39265656262</strong>
+            <span id="threadMeta">5 calls total</span>
+          </div>
+        </div>
+
+        <div class="timeline" id="threadTimeline"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="view" id="view-settings">
+        <div class="screen-title">
+          <strong>Settings</strong>
+        </div>
+
+        <div class="list settings-list">
+          <div class="settings-accordion" data-settings-section="audio">
+            <button class="settings-accordion-header" type="button" data-settings-accordion="audio">
+              <span class="settings-accordion-icon"><i class="ti ti-headphones" aria-hidden="true"></i></span>
+              <span class="settings-accordion-title">
+                <strong>Audio devices</strong>
+                <span>Microphone, speaker and ringtone</span>
+              </span>
+              <i class="ti ti-chevron-down settings-accordion-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="settings-accordion-body" data-settings-accordion-body="audio">
+              <div class="audio-device-card">
+                <label class="device-field" for="inputDeviceSelect">
+                  <span>Microphone</span>
+                  <select id="inputDeviceSelect"></select>
+                </label>
+
+                <label class="device-field" for="outputDeviceSelect">
+                  <span>Speaker</span>
+                  <select id="outputDeviceSelect"></select>
+                </label>
+
+                <label class="device-field" for="ringtoneDeviceSelect">
+                  <span>Ringtone</span>
+                  <select id="ringtoneDeviceSelect"></select>
+                </label>
+
+                <p class="device-support-note" id="audioOutputUnsupported" hidden>Speaker selection not supported by this browser.</p>
+
+                <div class="device-actions">
+                  <button type="button" id="refreshAudioDevices">Refresh devices</button>
+                  <button type="button" id="testSpeaker">Test speaker</button>
+                  <button type="button" id="testRingtone">Test ringtone</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-accordion" data-settings-section="sip">
+            <button class="settings-accordion-header" type="button" data-settings-accordion="sip">
+              <span class="settings-accordion-icon">SIP</span>
+              <span class="settings-accordion-title">
+                <strong>SIP account</strong>
+                <span>Stored locally in this browser.</span>
+              </span>
+              <i class="ti ti-chevron-down settings-accordion-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="settings-accordion-body" data-settings-accordion-body="sip">
+              <div class="settings-form" >
+                <div class="form-group" style="display:none">
+                  <label for="settingsCompanyWebsite">Company Website</label>
+                  <input class="settings-input" id="settingsCompanyWebsite" type="hidden" autocomplete="url" readonly disabled >
+                </div>
+                <div class="form-group">
+                  <label for="settingsExtension">Extension</label>
+                  <input class="settings-input" id="settingsExtension" type="text" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="settingsSipDomain">SIP Domain</label>
+                  <input class="settings-input" id="settingsSipDomain" type="text" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="settingsWebsocketUrl">WebSocket URL</label>
+                  <input class="settings-input" id="settingsWebsocketUrl" type="text" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="settingsSipUri">SIP URI</label>
+                  <input class="settings-input" id="settingsSipUri" type="text" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="settingsDisplayName">Display Name</label>
+                  <input class="settings-input" id="settingsDisplayName" type="text" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="settingsPassword">Password</label>
+                  <input class="settings-input" id="settingsPassword" type="password" autocomplete="current-password">
+                  <div class="settings-help">Stored locally in this browser.</div>
+                </div>
+                <div class="settings-actions">
+                  <button class="settings-btn primary" id="saveSettings" type="button">Save Settings</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-accordion" data-settings-section="behavior">
+            <button class="settings-accordion-header" type="button" data-settings-accordion="behavior">
+              <span class="settings-accordion-icon"><i class="ti ti-settings" aria-hidden="true"></i></span>
+              <span class="settings-accordion-title">
+                <strong>Call behavior</strong>
+                <span>Auto answer, line switching and theme</span>
+              </span>
+              <i class="ti ti-chevron-down settings-accordion-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="settings-accordion-body" data-settings-accordion-body="behavior">
+              <div class="toggle-row">
+                <input id="settingsAutoAnswer" type="checkbox">
+                <label for="settingsAutoAnswer"><strong>Auto answer</strong><span>Automatically answer incoming calls.</span></label>
+              </div>
+              <div class="toggle-row">
+                <input id="settingsAutoRecordCalls" type="checkbox">
+                <label for="settingsAutoRecordCalls"><strong>Auto record calls</strong><span>Record answered calls locally in this browser session.</span></label>
+              </div>
+              <p class="device-support-note">Local recording is stored only in this browser session unless downloaded.</p>
+              <div class="toggle-row">
+                <input id="settingsAutoHoldOnSwitch" type="checkbox">
+                <label for="settingsAutoHoldOnSwitch"><strong>Auto hold on line switch</strong><span>Hold the active call when switching lines.</span></label>
+              </div>
+              <div class="form-group">
+                <label for="settingsTheme">Theme</label>
+                <select class="settings-select" id="settingsTheme"><option value="light">Light</option><option value="dark">Dark</option></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-accordion" data-settings-section="diagnostics">
+            <button class="settings-accordion-header" type="button" data-settings-accordion="diagnostics">
+              <span class="settings-accordion-icon"><i class="ti ti-stethoscope" aria-hidden="true"></i></span>
+              <span class="settings-accordion-title"><strong>WebRTC Diagnostics</strong><span>Browser, audio and SIP connection status</span></span>
+              <i class="ti ti-chevron-down settings-accordion-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="settings-accordion-body" data-settings-accordion-body="diagnostics">
+              <div class="diagnostics-grid" aria-label="WebRTC diagnostics">
+                <div><span>Browser name</span><strong id="diagBrowserName">—</strong></div><div><span>Microphone supported</span><strong id="diagMicrophoneSupported">—</strong></div><div><span>Recording supported</span><strong id="diagRecordingSupported">—</strong></div><div><span>Speaker selection supported</span><strong id="diagSpeakerSelectionSupported">—</strong></div><div><span>Secure context</span><strong id="diagSecureContext">—</strong></div><div><span>WebRTC supported</span><strong id="diagWebRtcSupported">—</strong></div><div><span>Microphone permission status</span><strong id="diagMicrophonePermission">—</strong></div><div><span>Selected microphone</span><strong id="diagSelectedMicrophone">—</strong></div><div><span>Selected speaker</span><strong id="diagSelectedSpeaker">—</strong></div><div><span>SIP registration state</span><strong id="diagSipRegistration">—</strong></div><div><span>WebSocket state</span><strong id="diagWebSocketState">—</strong></div><div><span>Active line count</span><strong id="diagActiveLineCount">0</strong></div><div><span>Current active call ID</span><strong id="diagActiveCallId">—</strong></div><div><span>ICE connection state</span><strong id="diagIceConnectionState">—</strong></div><div><span>RTP audio tracks count</span><strong id="diagRtpAudioTracksCount">0</strong></div>
+              </div>
+              <div class="diagnostics-actions">
+                <button class="settings-btn secondary" id="diagTestMicrophone" type="button">Test microphone</button><button class="settings-btn secondary" id="diagTestSpeaker" type="button">Test speaker</button><button class="settings-btn primary" id="diagReconnectSip" type="button">Reconnect SIP</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="settings-accordion" data-settings-section="shortcuts">
+            <button class="settings-accordion-header" type="button" data-settings-accordion="shortcuts">
+              <span class="settings-accordion-icon"><i class="ti ti-keyboard" aria-hidden="true"></i></span>
+              <span class="settings-accordion-title"><strong>Keyboard Shortcuts</strong><span>Faster desktop phone controls</span></span>
+              <i class="ti ti-chevron-down settings-accordion-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="settings-accordion-body" data-settings-accordion-body="shortcuts">
+              <div class="shortcut-list" aria-label="Keyboard shortcuts"><div><kbd>Enter</kbd><span>Call / Answer</span></div><div><kbd>Esc</kbd><span>Close panel / Reject incoming</span></div><div><kbd>Ctrl+M</kbd><span>Mute</span></div><div><kbd>Ctrl+H</kbd><span>Hold</span></div><div><kbd>Ctrl+T</kbd><span>Transfer</span></div><div><kbd>Ctrl+R</kbd><span>Record</span></div><div><kbd>Ctrl+D</kbd><span>DTMF</span></div><div><kbd>Ctrl+S</kbd><span>Call Stack</span></div><div><kbd>Alt+1..4</kbd><span>Switch line</span></div></div>
+            </div>
+          </div>
+
+          <div class="settings-accordion" data-settings-section="local-data">
+            <button class="settings-accordion-header" type="button" data-settings-accordion="local-data">
+              <span class="settings-accordion-icon"><i class="ti ti-database" aria-hidden="true"></i></span>
+              <span class="settings-accordion-title"><strong>Local Data / Reset</strong><span>Reset settings, logs and browser data</span></span>
+              <i class="ti ti-chevron-down settings-accordion-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="settings-accordion-body" data-settings-accordion-body="local-data">
+              <div class="settings-actions"><button class="settings-btn secondary" id="resetSettings" type="button">Reset Settings</button><button class="settings-btn danger" id="clearCallLogs" type="button">Clear Call Logs</button><button class="settings-btn danger" id="diagClearLocalData" type="button">Clear Local Data</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INCOMING OVERLAY -->
+      <div class="incoming" id="incoming">
+        <small>Incoming call</small>
+        <h2 id="incomingNumber">+44 20 7946 0182</h2>
+        <p id="incomingLine">Line 3 waiting</p>
+
+        <div class="incoming-actions">
+          <button class="reject" id="rejectIncoming"><i class="ti ti-phone-off" aria-hidden="true"></i></button>
+          <button class="accept" id="acceptIncoming"><i class="ti ti-phone" aria-hidden="true"></i></button>
+        </div>
+      </div>
+
+      <!-- CONTACT FORM SHEET -->
+      <div class="sheet-backdrop" id="contactSheetBackdrop"></div>
+
+      <div class="sheet contact-sheet" id="contactSheet" aria-hidden="true">
+        <div class="grabber"></div>
+
+        <div class="sheet-title">
+          <strong id="contactFormTitle">Add Contact</strong>
+          <button class="sheet-close" id="closeContactSheet" type="button" aria-label="Close contact form"><i class="ti ti-x" aria-hidden="true"></i></button>
+        </div>
+
+        <form class="contact-form" id="contactForm">
+          <label class="form-group" for="contactName">
+            <span>Name</span>
+            <input class="settings-input" id="contactName" type="text" autocomplete="name" required>
+          </label>
+
+          <label class="form-group" for="contactNumber">
+            <span>Number</span>
+            <input class="settings-input" id="contactNumber" type="tel" autocomplete="tel" required>
+          </label>
+
+          <label class="form-group" for="contactCompany">
+            <span>Company</span>
+            <input class="settings-input" id="contactCompany" type="text" autocomplete="organization">
+          </label>
+
+          <label class="toggle-row contact-favorite-row" for="contactFavorite">
+            <input id="contactFavorite" type="checkbox">
+            <span>
+              <strong>Favorite</strong>
+              <span>Pin this contact above the rest.</span>
+            </span>
+          </label>
+
+          <div class="contact-form-actions">
+            <button class="settings-btn danger" id="deleteContactBtn" type="button" hidden>Delete</button>
+            <button class="settings-btn secondary" id="cancelContactForm" type="button">Cancel</button>
+            <button class="settings-btn primary" type="submit">Save</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- CALL STACK SHEET -->
+      <div class="sheet-backdrop" id="sheetBackdrop"></div>
+
+      <div class="sheet" id="stackSheet">
+        <div class="grabber"></div>
+
+        <div class="sheet-title">
+          <strong>Call Stack</strong>
+          <span>tap to switch</span>
+        </div>
+
+        <div id="stackLines"></div>
+      </div>
+
+    </section>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom">
+      <button class="nav active" data-nav="dial" title="Dialpad"><i class="ti ti-keyboard" aria-hidden="true"></i></button>
+      <button class="nav" data-nav="contacts" title="Contacts"><i class="ti ti-users" aria-hidden="true"></i></button>
+      <button class="nav stack-alert" id="stackBtn" title="Call Stack"><i class="ti ti-layers-intersect" aria-hidden="true"></i></button>
+      <button class="nav" data-nav="logs" title="Logs"><i class="ti ti-clock-hour-4" aria-hidden="true"></i></button>
+      <button class="nav" data-nav="settings" title="Settings"><i class="ti ti-settings" aria-hidden="true"></i></button>
+    </nav>
+
+    <!-- AGENT STATUS -->
+    <div class="agent-status">
+      <button class="status-left agent-status-button" id="agentStatusButton" type="button" aria-haspopup="listbox" aria-expanded="false">
+        <span class="small-dot presence-available" id="statusDot"><i class="ti ti-circle-filled" id="statusIcon" aria-hidden="true"></i></span>
+        <span id="agentState">Available</span>
+      </button>
+
+      <span class="footer-time"><span id="footerTime">00:00</span><i class="ti ti-chevron-down" aria-hidden="true"></i></span>
+      <div class="presence-picker" id="presencePicker" role="listbox" aria-label="Agent presence status"></div>
+    </div>
+
+  </main>
+</div>
+
+<audio id="remoteAudio" autoplay playsinline></audio>
+<audio id="ringtoneAudio" preload="auto" playsinline></audio>
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://jssip.net/download/releases/jssip-3.10.0.min.js"></script>
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
