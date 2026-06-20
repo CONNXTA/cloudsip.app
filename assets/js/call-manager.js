@@ -159,11 +159,23 @@ export function hangupActiveCall(){
   hangupActiveLine();
 }
 
+function autoAnswerLine(line){
+  if (!line || line.state !== 'ringing') return;
+
+  window.setTimeout(() => {
+    if (getSettings().autoAnswer) answerRingingLine(line.id);
+  }, 0);
+}
+
+export function applyCallBehaviorSettings(settings = getSettings()){
+  if (!settings.autoAnswer) return;
+  const ringingLine = state.lines.find((line) => line.state === 'ringing');
+  autoAnswerLine(ringingLine);
+}
+
 export function handleIncomingCall(caller, session){
   const line = addIncomingLine(caller, session);
-  if (getSettings().autoAnswer && line?.state === 'ringing') {
-    answerRingingLine(line.id);
-  }
+  if (getSettings().autoAnswer) autoAnswerLine(line);
 }
 
 export function answerIncomingCall(){
