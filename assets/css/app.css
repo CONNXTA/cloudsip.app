@@ -47,6 +47,16 @@ button,input{font:inherit} button{-webkit-tap-highlight-color:transparent}
 .number-input{color:var(--muted);font-size:15px;font-weight:800;text-align:center;word-break:break-all}.number-input.has-value{color:var(--ink);font-size:23px;font-weight:900;letter-spacing:.3px}
 .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:13px}.key{border:1px solid var(--border);background:#fff;color:var(--ink);min-height:54px;border-radius:17px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 18px rgba(15,23,42,.045);transition:.12s ease}.key:active{transform:scale(.97);background:#e8f5ff;border-color:rgba(0,116,186,.28)}.key b{font-size:24px;line-height:1;font-weight:800}.key span{color:var(--muted-2);font-size:9px;letter-spacing:1.3px;margin-top:3px;min-height:10px;font-weight:900}
 .call-row{display:grid;grid-template-columns:46px 1fr 46px;gap:12px;align-items:center;margin-top:3px}.round{border:0;border-radius:999px;display:grid;place-items:center;cursor:pointer}.round.ghost{width:46px;height:46px;border:1px solid var(--border);background:#fff;color:var(--muted)}.round.call{justify-self:center;width:76px;height:47px;background:linear-gradient(135deg,var(--green),#34d399);color:#fff;box-shadow:0 12px 24px rgba(20,184,106,.25)}
+.recent-dial-row{display:flex;align-items:center;gap:6px;min-height:28px;margin:-6px 0 8px;overflow:hidden}
+.recent-dial-row>div{display:flex;gap:5px;min-width:0;overflow-x:auto}
+.recent-dial-button,.recent-number{flex:none;border:1px solid var(--border);border-radius:999px;background:#fff;color:var(--brand);padding:5px 8px;font-size:9px;font-weight:800;cursor:pointer}
+.sip-message-panel{margin-bottom:10px;padding:10px;border:1px solid var(--border);border-radius:16px;background:#fff}
+.sip-message-panel[hidden]{display:none}
+.sip-message-panel input,.sip-message-panel textarea{width:100%;margin-bottom:6px;border:1px solid var(--border);border-radius:10px;padding:7px;font:inherit;font-size:11px}
+.sip-message-panel button{width:100%;border:0;border-radius:999px;background:var(--brand);color:#fff;padding:8px;font-size:11px;font-weight:800}
+#sipMessageInbox{display:grid;gap:5px;max-height:70px;overflow:auto;margin-top:7px}
+#sipMessageInbox div{display:grid;padding:5px;border-radius:8px;background:var(--surface-2);font-size:10px}
+#sipMessageInbox span{color:var(--muted)}
 .call-top-card{background:linear-gradient(135deg,var(--navy),#1f3350);border-radius:24px;color:#fff;padding:20px 14px;text-align:center;box-shadow:0 18px 36px rgba(15,23,42,.18);margin-bottom:15px;position:relative;overflow:hidden}.call-top-card:before{content:"";position:absolute;inset:auto -30px -44px auto;width:120px;height:120px;border-radius:50%;background:rgba(0,116,186,.34)}
 .active-avatar{width:52px;height:52px;border-radius:18px;background:rgba(255,255,255,.12);display:grid;place-items:center;margin:0 auto 10px;position:relative}.call-number{font-size:19px;font-weight:900;margin-bottom:5px;position:relative}.call-time{color:#bfdbfe;font-size:14px;font-weight:900;position:relative}
 .call-audio-meters{display:none;gap:8px;margin:0 0 14px;padding:12px;border:1px solid var(--border);border-radius:18px;background:#fff;box-shadow:0 8px 18px rgba(15,23,42,.04)}.call-audio-meters.show{display:grid}.audio-meter-row{display:grid;grid-template-columns:48px 1fr;align-items:center;gap:10px}.meter-label{font-size:11px;font-weight:900;color:#64748b}.audio-meter{height:8px;border-radius:999px;background:#e2e8f0;overflow:hidden}.audio-meter-fill{display:block;width:0%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--brand),var(--green));transition:width .08s linear}
@@ -1978,6 +1988,8 @@ body{padding:0}
 .settings-accordion-body{display:none;padding:0 14px 14px}
 .settings-accordion.open .settings-accordion-body{display:block}
 .settings-form{display:grid;gap:10px}
+.settings-subsection{display:grid;gap:10px}
+.settings-input:is(textarea){height:auto;min-height:76px;padding:10px 13px;resize:vertical}
 .form-group{display:grid;gap:5px}
 .form-group label{font-size:12px;font-weight:900;color:var(--ink)}
 .settings-input,.settings-select,.form-control{height:42px;border-radius:14px;padding:0 13px;font-size:14px;font-weight:600}
@@ -1988,6 +2000,9 @@ body{padding:0}
 .device-actions{gap:8px}
 .device-actions button{min-height:40px}
 .diagnostics-actions{display:grid;gap:8px;margin-top:12px}
+.diagnostics-grid .diagnostics-wide{grid-column:1 / -1}
+.diagnostics-grid strong.is-success{color:var(--green)}
+.diagnostics-grid strong.is-error{color:var(--red)}
 @media (max-height: 720px){
   #view-dial .number-card{min-height:70px;margin-bottom:10px}
   #view-dial .key{min-height:48px}

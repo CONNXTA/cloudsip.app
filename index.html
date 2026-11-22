@@ -66,6 +66,15 @@
           <div class="number-input" id="numberDisplay">Enter number...</div>
         </div>
 
+        <div class="recent-dial-row"><button class="recent-dial-button" id="redialBtn" type="button">Redial</button><div id="recentDialNumbers"></div></div>
+
+        <div class="sip-message-panel" id="sipMessagePanel" hidden>
+          <input id="sipMessageTarget" type="text" placeholder="Extension">
+          <textarea id="sipMessageBody" rows="2" placeholder="SIP message"></textarea>
+          <button id="sendSipMessage" type="button">Send message</button>
+          <div id="sipMessageInbox" aria-live="polite"></div>
+        </div>
+
         <div class="keypad" id="keypad">
           <button class="key" data-key="1"><b>1</b><span></span></button>
           <button class="key" data-key="2"><b>2</b><span>ABC</span></button>
@@ -282,6 +291,31 @@
             </button>
             <div class="settings-accordion-body" data-settings-accordion-body="sip">
               <div class="settings-form" >
+                <div class="form-group">
+                  <label for="settingsSetupMode">Setup mode</label>
+                  <select class="settings-select" id="settingsSetupMode"><option value="quick">Quick setup</option><option value="advanced">Advanced setup</option></select>
+                </div>
+                <div class="form-group">
+                  <label for="settingsProfileSelect">SIP profile</label>
+                  <select class="settings-select" id="settingsProfileSelect"><option value="">Current settings</option></select>
+                </div>
+                <div class="form-group">
+                  <label for="settingsProfileName">Profile name</label>
+                  <input class="settings-input" id="settingsProfileName" type="text" placeholder="Office PBX" autocomplete="off">
+                </div>
+                <div class="settings-actions">
+                  <button class="settings-btn secondary" id="loadSipProfile" type="button">Load Profile</button>
+                  <button class="settings-btn secondary" id="saveSipProfile" type="button">Save Profile</button>
+                  <button class="settings-btn danger" id="deleteSipProfile" type="button">Delete Profile</button>
+                </div>
+                <div class="settings-subsection" id="quickSetupFields">
+                  <div class="form-group"><label for="quickPbxHost">PBX Host</label><input class="settings-input" id="quickPbxHost" type="text" placeholder="pbx.example.com" autocomplete="off"></div>
+                  <div class="form-group"><label for="quickExtension">Extension</label><input class="settings-input" id="quickExtension" type="text" autocomplete="off"></div>
+                  <div class="form-group"><label for="quickDisplayName">Display Name</label><input class="settings-input" id="quickDisplayName" type="text" autocomplete="off"></div>
+                  <div class="form-group"><label for="quickPassword">Password</label><input class="settings-input" id="quickPassword" type="password" autocomplete="current-password"></div>
+                  <div class="settings-help">Quick setup uses wss://PBX-HOST:8089/ws and builds the SIP URI automatically.</div>
+                </div>
+                <div class="settings-subsection" id="advancedSetupFields" hidden>
                 <div class="form-group" style="display:none">
                   <label for="settingsCompanyWebsite">Company Website</label>
                   <input class="settings-input" id="settingsCompanyWebsite" type="hidden" autocomplete="url" readonly disabled >
@@ -311,8 +345,40 @@
                   <input class="settings-input" id="settingsPassword" type="password" autocomplete="current-password">
                   <div class="settings-help">Stored locally in this browser.</div>
                 </div>
+                <div class="form-group">
+                  <label for="settingsStunUrls">STUN URLs</label>
+                  <textarea class="settings-input" id="settingsStunUrls" rows="2" placeholder="stun:stun.example.com:3478"></textarea>
+                  <div class="settings-help">One URL per line. Leave empty when STUN is not required.</div>
+                </div>
+                <div class="form-group">
+                  <label for="settingsTurnUrls">TURN URLs</label>
+                  <textarea class="settings-input" id="settingsTurnUrls" rows="2" placeholder="turns:turn.example.com:5349"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="settingsTurnUsername">TURN Username</label>
+                  <input class="settings-input" id="settingsTurnUsername" type="text" autocomplete="off">
+                </div>
+                <div class="form-group">
+                  <label for="settingsTurnCredential">TURN Credential</label>
+                  <input class="settings-input" id="settingsTurnCredential" type="password" autocomplete="off">
+                </div>
+                <div class="toggle-row">
+                  <input id="settingsSessionTimers" type="checkbox">
+                  <label for="settingsSessionTimers"><strong>SIP session timers</strong><span>Keep long-running calls synchronized with the SIP server.</span></label>
+                </div>
+                </div>
+                <div class="toggle-row">
+                  <input id="settingsRememberPassword" type="checkbox">
+                  <label for="settingsRememberPassword"><strong>Remember password</strong><span>Turn off to keep the SIP password only for this browser session.</span></label>
+                </div>
                 <div class="settings-actions">
                   <button class="settings-btn primary" id="saveSettings" type="button">Save Settings</button>
+                </div>
+                <div class="form-group">
+                  <label>Configuration file</label>
+                  <div class="toggle-row"><input id="settingsExportPassword" type="checkbox"><label for="settingsExportPassword"><strong>Include password in export</strong><span>Disabled by default.</span></label></div>
+                  <input id="configurationFile" type="file" accept="application/json,.json" hidden>
+                  <div class="settings-actions"><button class="settings-btn secondary" id="importConfiguration" type="button">Import JSON</button><button class="settings-btn secondary" id="exportConfiguration" type="button">Export JSON</button></div>
                 </div>
               </div>
             </div>
@@ -348,6 +414,35 @@
             </div>
           </div>
 
+          <div class="settings-accordion" data-settings-section="telephony">
+            <button class="settings-accordion-header" type="button" data-settings-accordion="telephony">
+              <span class="settings-accordion-icon"><i class="ti ti-phone-cog" aria-hidden="true"></i></span>
+              <span class="settings-accordion-title"><strong>Telephony preferences</strong><span>Defaults, routing and optional modules</span></span>
+              <i class="ti ti-chevron-down settings-accordion-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="settings-accordion-body" data-settings-accordion-body="telephony">
+              <div class="form-group">
+                <label for="settingsTransferMode">Default transfer method</label>
+                <select class="settings-select" id="settingsTransferMode"><option value="blind">Blind transfer</option><option value="attended">Attended transfer</option></select>
+              </div>
+              <div class="toggle-row"><input id="settingsCallWaiting" type="checkbox"><label for="settingsCallWaiting"><strong>Call waiting</strong><span>Accept a second incoming call while another call is active.</span></label></div>
+              <div class="form-group">
+                <label for="settingsRingtoneStyle">Profile ringtone</label>
+                <select class="settings-select" id="settingsRingtoneStyle"><option value="classic">Classic ringtone</option><option value="silent">Silent</option></select>
+              </div>
+              <div class="form-group">
+                <label for="settingsDialPlanRules">Dial-plan rules</label>
+                <textarea class="settings-input" id="settingsDialPlanRules" rows="3" placeholder="^00 => +&#10;^0([1-9][0-9]+) => +355$1"></textarea>
+                <div class="settings-help">One pattern and replacement per line. Numbers remain unchanged by default.</div>
+              </div>
+              <div class="toggle-row"><input id="settingsHeadsetControls" type="checkbox"><label for="settingsHeadsetControls"><strong>WebHID headset controls</strong><span>Disabled by default and requires explicit device permission.</span></label></div>
+              <div class="settings-actions"><button class="settings-btn secondary" id="connectHeadset" type="button">Connect headset</button><span class="settings-help" id="headsetStatus">Not connected</span></div>
+              <div class="toggle-row"><input id="settingsSipMessageEnabled" type="checkbox"><label for="settingsSipMessageEnabled"><strong>SIP MESSAGE module</strong><span>Optional and disabled by default.</span></label></div>
+              <div class="toggle-row"><input id="settingsBlfEnabled" type="checkbox"><label for="settingsBlfEnabled"><strong>BLF module</strong><span>Optional and disabled by default; requires PBX support.</span></label></div>
+            </div>
+          </div>
+
+
           <div class="settings-accordion" data-settings-section="diagnostics">
             <button class="settings-accordion-header" type="button" data-settings-accordion="diagnostics">
               <span class="settings-accordion-icon"><i class="ti ti-stethoscope" aria-hidden="true"></i></span>
@@ -356,10 +451,39 @@
             </button>
             <div class="settings-accordion-body" data-settings-accordion-body="diagnostics">
               <div class="diagnostics-grid" aria-label="WebRTC diagnostics">
-                <div><span>Browser name</span><strong id="diagBrowserName">—</strong></div><div><span>Microphone supported</span><strong id="diagMicrophoneSupported">—</strong></div><div><span>Recording supported</span><strong id="diagRecordingSupported">—</strong></div><div><span>Speaker selection supported</span><strong id="diagSpeakerSelectionSupported">—</strong></div><div><span>Secure context</span><strong id="diagSecureContext">—</strong></div><div><span>WebRTC supported</span><strong id="diagWebRtcSupported">—</strong></div><div><span>Microphone permission status</span><strong id="diagMicrophonePermission">—</strong></div><div><span>Selected microphone</span><strong id="diagSelectedMicrophone">—</strong></div><div><span>Selected speaker</span><strong id="diagSelectedSpeaker">—</strong></div><div><span>SIP registration state</span><strong id="diagSipRegistration">—</strong></div><div><span>WebSocket state</span><strong id="diagWebSocketState">—</strong></div><div><span>Active line count</span><strong id="diagActiveLineCount">0</strong></div><div><span>Current active call ID</span><strong id="diagActiveCallId">—</strong></div><div><span>ICE connection state</span><strong id="diagIceConnectionState">—</strong></div><div><span>RTP audio tracks count</span><strong id="diagRtpAudioTracksCount">0</strong></div>
+                <div><span>Browser</span><strong id="diagBrowserName">—</strong></div>
+                <div><span>Secure context</span><strong id="diagSecureContext">—</strong></div>
+                <div><span>WebRTC</span><strong id="diagWebRtcSupported">—</strong></div>
+                <div><span>Microphone</span><strong id="diagMicrophoneSupported">—</strong></div>
+                <div><span>Microphone permission</span><strong id="diagMicrophonePermission">—</strong></div>
+                <div><span>Selected microphone</span><strong id="diagSelectedMicrophone">—</strong></div>
+                <div><span>Selected speaker</span><strong id="diagSelectedSpeaker">—</strong></div>
+                <div><span>Recording</span><strong id="diagRecordingSupported">—</strong></div>
+                <div><span>Speaker selection</span><strong id="diagSpeakerSelectionSupported">—</strong></div>
+                <div><span>SIP registration</span><strong id="diagSipRegistration">—</strong></div>
+                <div><span>WebSocket state</span><strong id="diagWebSocketState">—</strong></div>
+                <div><span>Active lines</span><strong id="diagActiveLineCount">0</strong></div>
+                <div><span>Active call ID</span><strong id="diagActiveCallId">—</strong></div>
+                <div><span>ICE gathering</span><strong id="diagIceGatheringState">—</strong></div>
+                <div><span>ICE connection</span><strong id="diagIceConnectionState">—</strong></div>
+                <div class="diagnostics-wide"><span>Local candidate</span><strong id="diagLocalCandidate">—</strong></div>
+                <div class="diagnostics-wide"><span>Remote candidate</span><strong id="diagRemoteCandidate">—</strong></div>
+                <div><span>TURN in use</span><strong id="diagTurnUsage">—</strong></div>
+                <div><span>Codec</span><strong id="diagCodec">—</strong></div>
+                <div><span>Jitter</span><strong id="diagJitter">—</strong></div>
+                <div><span>Packet loss</span><strong id="diagPacketLoss">—</strong></div>
+                <div><span>Round-trip time</span><strong id="diagRoundTripTime">—</strong></div>
+                <div><span>Inbound bitrate</span><strong id="diagBitrate">—</strong></div>
+                <div><span>Audio level</span><strong id="diagAudioLevel">—</strong></div>
+                <div><span>RTP audio tracks</span><strong id="diagRtpAudioTracksCount">0</strong></div>
+                <div class="diagnostics-wide"><span>WSS test result</span><strong id="diagWssTestResult">Not tested</strong></div>
               </div>
               <div class="diagnostics-actions">
-                <button class="settings-btn secondary" id="diagTestMicrophone" type="button">Test microphone</button><button class="settings-btn secondary" id="diagTestSpeaker" type="button">Test speaker</button><button class="settings-btn primary" id="diagReconnectSip" type="button">Reconnect SIP</button>
+                <button class="settings-btn secondary" id="diagTestMicrophone" type="button">Test microphone</button>
+                <button class="settings-btn secondary" id="diagTestSpeaker" type="button">Test speaker</button>
+                <button class="settings-btn primary" id="diagReconnectSip" type="button">Reconnect SIP</button>
+                <button class="settings-btn secondary" id="diagTestWss" type="button">Test WSS</button>
+                <button class="settings-btn primary" id="diagExportReport" type="button">Export report</button>
               </div>
             </div>
           </div>

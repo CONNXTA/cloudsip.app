@@ -14,19 +14,24 @@ import { initPresence } from './presence.js';
 import { initKeyboardShortcuts } from './keyboard-shortcuts.js';
 import { initTheme } from './theme-manager.js';
 import { blockSipForInvalidCompanyWebsite, normalizeCompanyWebsiteUrl } from './branding-check.js';
+import { initHeadsetControls } from './headset-controls.js';
+import { initOptionalSipModules } from './optional-sip-modules.js';
 
 function buildSipConfig(settings){
   return {
     websocketUrl: settings.websocketUrl,
     sipUri: settings.sipUri || `sip:${settings.extension}@${settings.sipDomain}`,
     password: settings.password,
+    iceServers: settings.iceServers,
+    sessionTimers: settings.sessionTimers,
+    reconnectMinSeconds: 2,
+    reconnectMaxSeconds: 30,
     displayName: settings.displayName || settings.extension,
     extension: settings.extension,
     autoAnswer: settings.autoAnswer,
     autoHoldOnSwitch: settings.autoHoldOnSwitch
   };
 }
-
 
 function sipConfigsMatch(firstConfig, secondConfig){
   if (!firstConfig || !secondConfig) return false;
@@ -35,7 +40,9 @@ function sipConfigsMatch(firstConfig, secondConfig){
     && firstConfig.sipUri === secondConfig.sipUri
     && firstConfig.password === secondConfig.password
     && firstConfig.displayName === secondConfig.displayName
-    && firstConfig.extension === secondConfig.extension;
+    && firstConfig.extension === secondConfig.extension
+    && firstConfig.sessionTimers === secondConfig.sessionTimers
+    && JSON.stringify(firstConfig.iceServers || []) === JSON.stringify(secondConfig.iceServers || []);
 }
 
 function updateHeaderFromSettings(settings){
@@ -122,6 +129,8 @@ async function boot(){
   initPresence();
   initPresenceSipControls();
   initKeyboardShortcuts();
+  initHeadsetControls();
+  initOptionalSipModules();
   const settings = getSettings();
   updateTodayDate();
   updateHeaderFromSettings(settings);

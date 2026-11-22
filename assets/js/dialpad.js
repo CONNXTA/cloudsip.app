@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { updateNumberDisplay } from './ui.js';
 import { startCall } from './call-manager.js';
 import { playDtmfTone } from './sound-manager.js';
+import { applyDialPlan, lastDialedNumber, recentDialedNumbers } from './telephony-preferences.js';
 
 function isTypingTarget(target) {
   return (
@@ -28,7 +29,15 @@ function handleDialKey(key) {
 
 function handleStartCall() {
   if (!state.typed) return;
-  startCall();
+  state.typed = applyDialPlan(state.typed);
+  updateNumberDisplay(state);
+  startCall(state.typed);
+}
+
+function renderRecentNumbers(){
+  const container = document.getElementById('recentDialNumbers');
+  if (!container) return;
+  container.innerHTML = recentDialedNumbers().map((number) => `<button class="recent-number" type="button" data-recent-number="${number}">${number}</button>`).join('');
 }
 
 export function updateDialModeUI() {
@@ -38,6 +47,12 @@ export function updateDialModeUI() {
 export function initDialpad(){
   document.addEventListener('click', (e) => {
     const key = e.target.closest('[data-key]');
+    const recent = e.target.closest('[data-recent-number]');
+    if (recent) {
+      state.typed = recent.dataset.recentNumber;
+      updateNumberDisplay(state);
+      return;
+    }
     if (!key) return;
 
     handleDialKey(key.dataset.key);
@@ -89,5 +104,14 @@ export function initDialpad(){
   });
 
   document.getElementById('startCall').addEventListener('click', handleStartCall);
+  document.getElementById('redialBtn')?.addEventListener('click', () => {
+    const number = lastDialedNumber();
+    if (!number) return;
+    state.typed = number;
+    updateNumberDisplay(state);
+    startCall(number);
+  });
+  window.addEventListener('calllogs:changed', renderRecentNumbers);
+  renderRecentNumbers();
   updateDialModeUI();
 }

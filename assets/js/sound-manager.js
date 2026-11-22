@@ -1,4 +1,5 @@
 import { getSelectedAudioDevices } from './audio-devices.js';
+import { getSettings } from './settings-store.js';
 
 const RINGTONE_SRC = 'assets/sounds/ringtone.mp3';
 const RINGBACK_SRC = 'assets/sounds/ringback.mp3';
@@ -207,6 +208,7 @@ export function initSoundManager(){
 }
 
 export function playRingtone(){
+  if (getSettings().ringtoneStyle === 'silent') return;
   initSoundManager();
   playLoopingAudio(ringtoneAudio, 'ringtone');
 }

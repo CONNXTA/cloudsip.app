@@ -3,6 +3,7 @@ import { $, formatTime } from './ui.js';
 import { getSettings } from './settings-store.js';
 import { isRecording, isRecordingSupported, stopRecordingPlayback } from './recording-manager.js';
 import { addIncomingLine, answerRingingLine, blindTransferActiveLine, cancelConsultTransfer as cancelManagedConsultTransfer, completeConsultTransfer as completeManagedConsultTransfer, getActiveConsultTransfer, getActiveLine, hangupActiveLine, markLineAnswered, markLineEnded, rejectRingingLine, renderStack, sendActiveDTMF, startConsultTransfer as startManagedConsultTransfer, startManagedCall, tickActiveLineTimer, toggleActiveHold, toggleActiveMute, toggleActiveRecording, updateActiveCallScreen as updateManagedActiveCallScreen, updateLineHold, updateLineMute } from './line-manager.js';
+import { isConferenceActive, stopConference, toggleConference } from './conference-manager.js';
 
 
 export function startTimers(){
@@ -89,7 +90,10 @@ export function toggleTransferPanel() {
   btn.classList.toggle('active', panel.classList.contains('show'));
   panel.setAttribute('aria-hidden', panel.classList.contains('show') ? 'false' : 'true');
 
-  if (panel.classList.contains('show')) input?.focus();
+  if (panel.classList.contains('show')) {
+    updateTransferPreference();
+    input?.focus();
+  }
 }
 
 function hideTransferPanel() {
@@ -105,6 +109,12 @@ function getTransferTarget() {
 
   if (!target) input?.focus();
   return target;
+}
+
+function updateTransferPreference(){
+  const attendedDefault = getSettings().transferMode === 'attended';
+  document.getElementById('blindTransfer')?.classList.toggle('secondary', attendedDefault);
+  document.getElementById('consultTransfer')?.classList.toggle('secondary', !attendedDefault);
 }
 
 function confirmBlindTransfer() {
@@ -175,7 +185,7 @@ export function applyCallBehaviorSettings(settings = getSettings()){
 
 export function handleIncomingCall(caller, session){
   const line = addIncomingLine(caller, session);
-  if (getSettings().autoAnswer) autoAnswerLine(line);
+  if (line && getSettings().autoAnswer) autoAnswerLine(line);
 }
 
 export function answerIncomingCall(){
@@ -241,6 +251,8 @@ document.querySelectorAll('[data-dtmf]').forEach(btn => {
 });
 
 document.getElementById('transferBtn')?.addEventListener('click', toggleTransferPanel);
+document.getElementById('consultBtn')?.addEventListener('click', toggleTransferPanel);
+document.getElementById('conferenceBtn')?.addEventListener('click', toggleConference);
 document.getElementById('cancelTransfer')?.addEventListener('click', hideTransferPanel);
 document.getElementById('blindTransfer')?.addEventListener('click', confirmBlindTransfer);
 document.getElementById('consultTransfer')?.addEventListener('click', confirmConsultTransfer);
@@ -249,7 +261,8 @@ document.getElementById('cancelConsultTransfer')?.addEventListener('click', canc
 document.getElementById('transferTarget')?.addEventListener('keydown', (event) => {
   if (event.key === 'Enter') {
     event.preventDefault();
-    confirmBlindTransfer();
+    if (getSettings().transferMode === 'attended') confirmConsultTransfer();
+    else confirmBlindTransfer();
   }
 });
 
@@ -258,6 +271,10 @@ window.addEventListener('browser:capabilities', () => updateRecordingButton(getA
 document.addEventListener('activecall:updated', (event) => {
   updateRecordingButton(event.detail?.line);
   updateConsultTransferControls();
+  if (isConferenceActive() && state.lines.filter((line) => line.inConference && ['active', 'hold'].includes(line.state)).length < 2) stopConference();
+});
+window.addEventListener('conference:changed', (event) => {
+  document.getElementById('conferenceBtn')?.classList.toggle('active', Boolean(event.detail?.active));
 });
 window.addEventListener('recording:ready', (event) => {
   const line = getActiveLine();

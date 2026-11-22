@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { showError, showInfo, showSuccess, showWarning } from './toast.js';
 import { $, closeSheet, formatTime, openSheet, showView, updateNumberDisplay } from './ui.js';
 import { getSettings } from './settings-store.js';
-import { answerSession, attachRemoteAudio, blindTransferSession, createOutgoingSession, hangupSession, holdSession, isSipRegistered, muteSession, sendDTMF, unholdSession, unmuteSession } from './sip-client.js';
+import { answerSession, attachRemoteAudio, attendedTransferSession, blindTransferSession, createOutgoingSession, hangupSession, holdSession, isSipRegistered, muteSession, sendDTMF, unholdSession, unmuteSession } from './sip-client.js';
 import { attachRecordingToLine, attachSipCallId, createCallLog, markCallLogAnswered, markCallLogEnded, recordDtmfForLine, recordTransferForLine } from './call-log-store.js';
 import { playRingback, playRingtone, stopAllSounds, stopRingback, stopRingtone } from './sound-manager.js';
 import { getUserPresence, setPresenceActiveCall, updatePresenceDisplay } from './presence.js';
@@ -330,6 +330,13 @@ export function addIncomingLine(caller, session){
   if (existingLine) {
     console.warn('Skipping duplicate line for session', session?.id || session);
     return existingLine;
+  }
+
+  if (!getSettings().callWaiting && liveLines().some((line) => ['active', 'hold', 'calling'].includes(line.state))) {
+    session?.terminate?.({ status_code: 486, reason_phrase: 'Busy Here' });
+    createCallLog({ remoteNumber: caller, direction: 'inbound', status: 'missed', session });
+    showWarning('Incoming call rejected: call waiting is disabled');
+    return null;
   }
 
   const line = makeLine({ session, number: caller, direction: 'inbound', state: 'ringing' });
@@ -730,7 +737,7 @@ export async function completeConsultTransfer(){
   if (!consult) return false;
 
   const { originalLine, consultLine, target } = consult;
-  const transferred = blindTransferSession(originalLine.session, target);
+  const transferred = attendedTransferSession(originalLine.session, consultLine.session, target);
   if (!transferred) return false;
 
   originalLine.transfer = { type: 'consult', target, completedAt: Date.now() };
